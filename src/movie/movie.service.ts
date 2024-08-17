@@ -4,6 +4,8 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Injectable()
 export class MovieService {
+  constructor() {}
+
   create(createMovieDto: CreateMovieDto) {
     return 'This action adds a new movie';
   }

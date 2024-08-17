@@ -4,7 +4,7 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
-@Controller('auth')
+@Controller('user')
 export class UserController {
   constructor(
     private readonly userService: UserService,
@@ -24,7 +24,7 @@ export class UserController {
   async login(@Body() loginData: { email: string; password: string }) {
     const user = await this.userService.findByEmail(loginData.email);
     if (!user || !(await bcrypt.compare(loginData.password, user.password))) {
-      throw new BadRequestException('Invalid credentials');
+      throw new BadRequestException('Invalid email or password');
     }
 
     const token = this.jwtService.sign({ id: user.id, email: user.email });
