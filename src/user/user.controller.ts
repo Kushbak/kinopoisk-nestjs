@@ -1,33 +1,24 @@
-import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post('register')
-  async register(@Body() userData: Partial<User>): Promise<User> {
-    const user = await this.userService.findByEmail(userData.email);
-    if (user) {
-      throw new BadRequestException('User already exists');
-    }
+  async register(@Body() userData: CreateUserDto): Promise<User> {
     return this.userService.create(userData);
   }
 
   @Post('login')
   async login(@Body() loginData: { email: string; password: string }) {
-    const user = await this.userService.findByEmail(loginData.email);
-    if (!user || !(await bcrypt.compare(loginData.password, user.password))) {
-      throw new BadRequestException('Invalid email or password');
-    }
+    return this.userService.login(loginData);
+  }
 
-    const token = this.jwtService.sign({ id: user.id, email: user.email });
-    return { token };
+  @Get()
+  async getUsers() {
+    return this.userService.getUsers();
   }
 }
