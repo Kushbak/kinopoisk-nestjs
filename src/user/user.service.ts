@@ -76,7 +76,6 @@ export class UserService {
         throw new BadRequestException('User not found');
       }
 
-      delete candidate.password;
       return candidate;
     } catch (e) {
       handleError('[UserModule]', e);
